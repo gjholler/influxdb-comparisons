@@ -19,6 +19,9 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+	// *** GJH added from here
+	"crypto/tls"
+	// *** to here
 
 	"github.com/influxdata/influxdb-comparisons/util/report"
 	"github.com/pkg/profile"
