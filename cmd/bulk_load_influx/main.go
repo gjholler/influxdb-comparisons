@@ -57,6 +57,7 @@ var (
 	reportUser         string
 	reportPassword     string
 	reportTagsCSV      string
+	verifyCert         bool
 )
 
 // Global vars
@@ -110,6 +111,7 @@ func init() {
 	flag.StringVar(&reportUser, "report-user", "", "User for host to send result metrics")
 	flag.StringVar(&reportPassword, "report-password", "", "User password for Host to send result metrics")
 	flag.StringVar(&reportTagsCSV, "report-tags", "", "Comma separated k:v tags to send  alongside result metrics")
+	flag.BoolVar(&verifyCert, "verify-certificate", true, "Whether to verify server's certificate. Set TRUE for Production")
 
 	flag.Parse()
 
@@ -469,7 +471,14 @@ func createDb(daemon_url, dbname string, replicationFactor int) error {
 		return err
 	}
 
-	client := &http.Client{}
+	// *** GJH - Changes from here
+	tr := &http.Transport {
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: !verifyCert},
+	}
+
+	client := &http.Client{Transport: tr}
+	//client := &http.Client{}
+	// *** to here
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
@@ -486,7 +495,17 @@ func createDb(daemon_url, dbname string, replicationFactor int) error {
 // listDatabases lists the existing databases in InfluxDB.
 func listDatabases(daemonUrl string) ([]string, error) {
 	u := fmt.Sprintf("%s/query?q=show%%20databases", daemonUrl)
-	resp, err := http.Get(u)
+
+	// *** GJH - Changes from here
+	tr := &http.Transport {
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: !verifyCert},
+	}
+
+	client := &http.Client{Transport: tr}
+	resp, err := client.Get(u)
+	//resp, err := http.Get(u)
+	// *** to here
+
 	if err != nil {
 		return nil, fmt.Errorf("listDatabases error: %s", err.Error())
 	}
