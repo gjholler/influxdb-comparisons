@@ -50,6 +50,7 @@ func NewHTTPWriter(c HTTPWriterConfig, consistency string) *HTTPWriter {
 	return &HTTPWriter{
 		client: fasthttp.Client{
 			Name: "bulk_load_influx",
+			InsecureSkipVerify: true,
 		},
 
 		c:   c,
