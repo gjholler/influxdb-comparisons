@@ -7,6 +7,9 @@ import (
 	"fmt"
 	"net/url"
 	"time"
+	// *** GJH added from here
+	"crypto/tls"
+	// *** to here
 
 	"github.com/valyala/fasthttp"
 )
@@ -46,11 +49,19 @@ type HTTPWriter struct {
 }
 
 // NewHTTPWriter returns a new HTTPWriter from the supplied HTTPWriterConfig.
-func NewHTTPWriter(c HTTPWriterConfig, consistency string) *HTTPWriter {
+// ** GJH - Added ignoreCertWarning
+func NewHTTPWriter(c HTTPWriterConfig, consistency string, ignoreCertWarning bool) *HTTPWriter {
+	tlsc := &tls.Config{InsecureSkipVerify: ignoreCertWarning }
+//	if (ignoreCertWarning) {
+//		tlsc := &tls.Config{InsecureSkipVerify: false}
+//	} else {
+//		tlsc := &tls.Config{}
+//	}
+
 	return &HTTPWriter{
 		client: fasthttp.Client{
 			Name: "bulk_load_influx",
-			InsecureSkipVerify: true,
+			TLSConfig: tlsc,
 		},
 
 		c:   c,

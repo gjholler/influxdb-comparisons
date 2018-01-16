@@ -60,7 +60,7 @@ var (
 	reportUser         string
 	reportPassword     string
 	reportTagsCSV      string
-	verifyCert         bool
+	ignoreCertWarning  bool
 )
 
 // Global vars
@@ -114,7 +114,7 @@ func init() {
 	flag.StringVar(&reportUser, "report-user", "", "User for host to send result metrics")
 	flag.StringVar(&reportPassword, "report-password", "", "User password for Host to send result metrics")
 	flag.StringVar(&reportTagsCSV, "report-tags", "", "Comma separated k:v tags to send  alongside result metrics")
-	flag.BoolVar(&verifyCert, "verify-certificate", true, "Whether to verify server's certificate. Set TRUE for Production")
+	flag.BoolVar(&ignoreCertWarning, "ignore-certificate-warning", false, "Whether to verify server's certificate. Set FALSE for Production")
 
 	flag.Parse()
 
@@ -233,7 +233,7 @@ func main() {
 			BackingOffChan: backingOffChans[i],
 			BackingOffDone: backingOffDones[i],
 		}
-		go processBatches(NewHTTPWriter(cfg, consistency), backingOffChans[i], backingOffDones[i], telemetryChanPoints, fmt.Sprintf("%d", i))
+		go processBatches(NewHTTPWriter(cfg, consistency, ignoreCertWarning), backingOffChans[i], backingOffDones[i], telemetryChanPoints, fmt.Sprintf("%d", i))
 		go processBackoffMessages(i, backingOffChans[i], backingOffDones[i])
 	}
 
@@ -476,7 +476,7 @@ func createDb(daemon_url, dbname string, replicationFactor int) error {
 
 	// *** GJH - Changes from here
 	tr := &http.Transport {
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: !verifyCert},
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: ignoreCertWarning},
 	}
 
 	client := &http.Client{Transport: tr}
@@ -501,7 +501,7 @@ func listDatabases(daemonUrl string) ([]string, error) {
 
 	// *** GJH - Changes from here
 	tr := &http.Transport {
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: !verifyCert},
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: ignoreCertWarning},
 	}
 
 	client := &http.Client{Transport: tr}
