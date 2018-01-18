@@ -45,6 +45,7 @@ var (
 	reportUser           string
 	reportPassword       string
 	reportTagsCSV        string
+	ignoreCertWarning    bool
 )
 
 // Global vars:
@@ -88,6 +89,7 @@ func init() {
 	flag.StringVar(&reportUser, "report-user", "", "User for Host to send result metrics.")
 	flag.StringVar(&reportPassword, "report-password", "", "User password for Host to send result metrics.")
 	flag.StringVar(&reportTagsCSV, "report-tags", "", "Comma separated k:v tags to send  alongside result metrics.")
+	flag.BoolVar(&ignoreCertWarning, "ignore-certificate-warning", false, "Set to true to ignore certificate warnings. Default: FALSE")
 
 	flag.Parse()
 
@@ -184,7 +186,7 @@ func main() {
 	for i := 0; i < workers; i++ {
 		daemonUrl := daemonUrls[i%len(daemonUrls)]
 		workersGroup.Add(1)
-		w := NewHTTPClient(daemonUrl, debug)
+		w := NewHTTPClient(daemonUrl, debug, ignoreCertWarning)
 		go processQueries(w, telemetryChanPoints, fmt.Sprintf("%d", i))
 	}
 

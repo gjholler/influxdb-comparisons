@@ -52,11 +52,6 @@ type HTTPWriter struct {
 // ** GJH - Added ignoreCertWarning
 func NewHTTPWriter(c HTTPWriterConfig, consistency string, ignoreCertWarning bool) *HTTPWriter {
 	tlsc := &tls.Config{InsecureSkipVerify: ignoreCertWarning }
-//	if (ignoreCertWarning) {
-//		tlsc := &tls.Config{InsecureSkipVerify: false}
-//	} else {
-//		tlsc := &tls.Config{}
-//	}
 
 	return &HTTPWriter{
 		client: fasthttp.Client{

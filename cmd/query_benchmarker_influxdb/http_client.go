@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"os"
 	"time"
+	// *** GJH added from here
+	"crypto/tls"
+	// *** to here
 
 	"github.com/valyala/fasthttp"
 )
@@ -28,7 +31,9 @@ type HTTPClientDoOptions struct {
 }
 
 // NewHTTPClient creates a new HTTPClient.
-func NewHTTPClient(host string, debug int) *HTTPClient {
+func NewHTTPClient(host string, debug int, ignoreCertWarning bool) *HTTPClient {
+	tlsc := &tls.Config{InsecureSkipVerify: ignoreCertWarning }
+
 	return &HTTPClient{
 		client: fasthttp.Client{
 			Name: "query_benchmarker",
@@ -37,6 +42,7 @@ func NewHTTPClient(host string, debug int) *HTTPClient {
 		HostString: host,
 		uri:        []byte{}, // heap optimization
 		debug:      debug,
+		TLSConfig:  tlsc,
 	}
 }
 
