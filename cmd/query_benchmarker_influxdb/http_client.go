@@ -37,12 +37,12 @@ func NewHTTPClient(host string, debug int, ignoreCertWarning bool) *HTTPClient {
 	return &HTTPClient{
 		client: fasthttp.Client{
 			Name: "query_benchmarker",
+			TLSConfig:  tlsc,
 		},
 		Host:       []byte(host),
 		HostString: host,
 		uri:        []byte{}, // heap optimization
 		debug:      debug,
-		TLSConfig:  tlsc,
 	}
 }
 
