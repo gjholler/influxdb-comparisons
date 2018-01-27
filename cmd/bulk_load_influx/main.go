@@ -19,9 +19,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-	// *** GJH added from here
 	"crypto/tls"
-	// *** to here
 
 	"github.com/influxdata/influxdb-comparisons/util/report"
 	"github.com/pkg/profile"
@@ -474,14 +472,11 @@ func createDb(daemon_url, dbname string, replicationFactor int) error {
 		return err
 	}
 
-	// *** GJH - Changes from here
 	tr := &http.Transport {
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: ignoreCertWarning},
 	}
 
 	client := &http.Client{Transport: tr}
-	//client := &http.Client{}
-	// *** to here
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
@@ -499,15 +494,12 @@ func createDb(daemon_url, dbname string, replicationFactor int) error {
 func listDatabases(daemonUrl string) ([]string, error) {
 	u := fmt.Sprintf("%s/query?q=show%%20databases", daemonUrl)
 
-	// *** GJH - Changes from here
 	tr := &http.Transport {
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: ignoreCertWarning},
 	}
 
 	client := &http.Client{Transport: tr}
 	resp, err := client.Get(u)
-	//resp, err := http.Get(u)
-	// *** to here
 
 	if err != nil {
 		return nil, fmt.Errorf("listDatabases error: %s", err.Error())

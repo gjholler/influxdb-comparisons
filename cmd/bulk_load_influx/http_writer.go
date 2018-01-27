@@ -7,9 +7,7 @@ import (
 	"fmt"
 	"net/url"
 	"time"
-	// *** GJH added from here
 	"crypto/tls"
-	// *** to here
 
 	"github.com/valyala/fasthttp"
 )
@@ -49,7 +47,6 @@ type HTTPWriter struct {
 }
 
 // NewHTTPWriter returns a new HTTPWriter from the supplied HTTPWriterConfig.
-// ** GJH - Added ignoreCertWarning
 func NewHTTPWriter(c HTTPWriterConfig, consistency string, ignoreCertWarning bool) *HTTPWriter {
 	tlsc := &tls.Config{InsecureSkipVerify: ignoreCertWarning }
 
